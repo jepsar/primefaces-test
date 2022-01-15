@@ -1,19 +1,56 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <h:head>
-        <title>PrimeFaces Test</title>
-        <h:outputScript name="test.js" />
+        <title>Tree</title>
     </h:head>
     <h:body>
 
-        <h1>#{testView.string}</h1>
-        <h:form id="frmTest">
-            
+        <h:form>
+            <h1>Tree</h1>
+
+            <p:panelGrid columns="2">
+                <h:panelGroup>
+                    <p:tree id="tree"
+                            value="#{testView.root}"
+                            selection="#{testView.selectedNode}"
+                            selectionMode="single"
+                            nodeVar="node"
+                            var="item"
+                            draggable="true"
+                            droppable="true">
+                        <p:treeNode>
+                            #{node.rowKey}
+                            #{item.name}
+                        </p:treeNode>
+
+                        <p:ajax event="select" update="@parent:details"/>
+                        <p:ajax event="unselect" update="@parent:details"/>
+                        <p:ajax event="expand" listener="#{testView.onNodeExpand}"/>
+                        <p:ajax event="collapse" listener="#{testView.onNodeCollapse}"/>
+                    </p:tree>
+
+                    <p:commandButton value="Add"
+                                     action="#{testView.add()}"
+                                     process="@this"
+                                     update="tree"/>
+
+                    <p:commandButton value="Delete"
+                                     action="#{testView.delete()}"
+                                     process="@this"
+                                     update="tree"/>
+                </h:panelGroup>
+
+                <h:panelGroup id="details">
+                    <h:panelGroup rendered="#{not empty testView.selectedNode}">
+                        <p>name: #{testView.selectedNode.data.name}</p>
+                        <p>id: #{testView.selectedNode.data.id}</p>
+                    </h:panelGroup>
+                </h:panelGroup>
+            </p:panelGrid>
+
         </h:form>
 
     </h:body>
